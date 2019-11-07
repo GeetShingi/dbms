@@ -1,0 +1,67 @@
+db.students.insert({
+	roll_no:31457,
+	name:"Geet",
+	marks:
+	{
+		dbms:21,
+		cn:23,
+		toc:26
+	},
+	branch:"comp"
+});
+
+
+
+//Creating unique index
+db.students.createIndex({"roll_no":1},{unique: true});
+
+
+------------------------------------------------------------------------
+
+db.students.aggregate([
+	{
+	$project:{
+		name : 1,
+		total_marks : {$sum : ['$marks.dbms','$marks.cn','$marks.toc']}
+	}
+	}
+])
+
+
+------------------------------------------------------------------------
+
+db.students.aggregate([
+	{
+		$project:{
+			name : 1,
+			total_marks : {$sum : ['$marks.dbms','$marks.cn','$marks.toc']}
+		}
+	},
+	{
+		$match:
+		{total_marks:{$gt:70}}
+	}
+])
+
+------------------------------------------------------------------------
+
+db.students.aggregate([
+	{
+	$project:{
+		name : 1,
+		total_marks : {$sum : ['$marks.dbms','$marks.cn','$marks.toc']}
+	}
+	}
+]).forEach(function(doc){db.students.update({'name':doc.name},{$set:{'total':doc.total_marks}},{multi:true,upsert:true})});
+
+
+------------------------------------------------------------------------
+
+
+db.students.aggregate([{
+	$group:
+	{
+		_id:'$branch',
+		total_m : {$max:'$total'}
+	}
+}]).forEach(function(doc){db.students.find({total:doc.total_m})})
