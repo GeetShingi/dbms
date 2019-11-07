@@ -1,0 +1,65 @@
+db.library.insertOne({book_isbn: 002,publisher_name:"tata",price: 20,Date_of_publication: Date(),book_copy:20,address: 'Mumbai',phone:'8551807373',title:'A'});
+
+db.library.find({});
+
+db.library.find({},{_id:0});
+
+db.library.find({},{title:1,price:1,book_copy:1});
+
+db.library.find({title: {$ne:'A'}});
+
+db.library.find({price: {$gt: 10}});
+
+db.library.updateMany({book_isbn: 2},{$set: {publisher_name:"Tata Hill"}});
+
+db.library.deleteMany({title: "A"});
+
+db.library.insertOne({book_isbn: 002,publisher_name:"tata",price: 20,Date_of_publication: Date(),book_copy:20,address: 'Mumbai',phone:['8551807373','9422325540'],title:'Big Data'});
+
+db.library.save({book_isbn: 004,publisher_name:"tata",price: 20,Date_of_publication: Date(),book_copy:20,address: 'Mumbai',phone:['8551807373','9422325540'],title:'Big Data'});
+
+db.library.save({_id: 100,book_isbn: 002,publisher_name:"Mcg",price: 20,Date_of_publication: Date(),book_copy:20,address: 'Mumbai',phone:['8551807373','9422325540'],title:'ML'});
+
+var mydoc = {
+	book_isbn: 002,
+	publisher_name:"Mcg",
+	price: 20,
+	Date_of_publication: Date(),
+	book_copy:20,
+	address: 'Mumbai',
+	phone:['8551807373','9422325540'],
+	title:'ML'
+}
+ fvrgrtbgth
+db.library.find({price: {$gte: 10,$lt: 20}});
+
+db.library.find({$or: [{price:10},{title: 'ML'}]});
+
+db.library.updateMany({publisher_name: 'Mcg'},{$set: {"phone.0": '8551088188'}});
+
+db.library.updateMany({title: 'ML'},{$unset: {title:""}});
+
+db.library.find({publisher_name: /^Mc/ });
+
+db.library.createIndex({book_isbn: 1});
+
+db.library.createIndex({book_isbn: 1,price: -1});
+
+db.library.find({}).sort({book_isbn:1,price:-1}).pretty();
+
+db.library.aggregate([
+	{$match: {price: {$gt: 10}}},
+	{$group: {_id: "$publisher_name",total: {$sum: "$price"}}}
+])
+
+
+db.library.mapReduce(
+	function() {emit(this.publisher_name,this.price)},
+	function(key,values) {return Array.sum(values)}, {
+	query: {price: {$gt:10}},
+	out: "total_amount"
+	}
+).find()
+
+
+
